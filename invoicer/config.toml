@@ -1,0 +1,16 @@
+[table_indexes]
+id = "ID"
+address = "Full Address"
+city = "City"
+street = "Str."
+apartment = "Apt."
+
+organisation = "Organisation Name"
+department = "Org. Department"
+shop_name = "Shop Name"
+
+latitude = "Latitude"
+longitude = "Longitude"
+coordinates = "Coordinates"
+
+org_group = "Organisation Group"
