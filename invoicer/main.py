@@ -52,5 +52,5 @@ if __name__ == "__main__":
     ]
     
     for generator in generators:
-        generator.generate_merged_file()
+        generator.generate_file()
 

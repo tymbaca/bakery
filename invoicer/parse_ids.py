@@ -1,12 +1,12 @@
 from pprint import pprint
 
 
-def parse_ids(input_filename: str, output_filename: str):
-    ids = _parse_ids(input_filename)
+def bake_ids_file(input_filename: str, output_filename: str):
+    ids = parse_ids(input_filename)
     save_result(output_filename, ids)
 
 
-def _parse_ids(filename: str) -> list[list[str]]:
+def parse_ids(filename: str) -> list[list[str]]:
     with open(filename, "r") as f:
         lines = f.readlines()
 
@@ -40,6 +40,6 @@ def save_result(filename: str, ids):
             file.write("\n")
 
 if __name__ == "__main__":
-    ids = _parse_ids("target.md")
+    ids = parse_ids("target.md")
     save_result("result.md", ids)
 
