@@ -5,11 +5,22 @@ from docxcompose.composer import Composer
 from docx import Document
 
 import shops_parser
+import parse_ids
 
 
 logger.add("debug.log")
 TEMP_FOLDER = "tmp/"
 RESULT_FOLDER = "Result/"
+
+
+OUTPUT_FILENAMES = [
+    "2. Вторник",
+    "3. Среда",
+    "4. Четверг",
+    "5. Пятница",
+    "6. Суббота",
+    "7. Воскресенье",
+]
 
 
 class InvalidShopIDError(Exception):
@@ -26,32 +37,27 @@ class NotCreatedFunctionalityError(Exception):
 
 class InvoiceGenerator:
     def __init__(self,
-                 ids_string: str,
+                 raw_ids_filename: str,
                  template_filename: str,
-                 shops: list[Shop] = None,
-                 input_shops_filename: str = None,
+                 input_shops_filename: str = "target.tsv",
                  output_name: str = "Generated_Invoice",
                  ids_separator: str = " ",
                  start_count_from=1):
-        self.ids = ids_string.split(ids_separator)
-        self.ids_string = ids_string
-        self.ids_separator = ids_separator
-        self._input_shops_filename = input_shops_filename
+
+        # self.ids = ids_string.split(ids_separator)
+        # self.ids_string = ids_string
+        # self.ids_separator = ids_separator
+        
+        self.ids_by_days: list[list[str]] = parse_ids._parse_ids(raw_ids_filename)
+        
         self.template_filename = template_filename
         self.output_name = output_name
         self.start_count_from = start_count_from
-
-        if shops is not None and type(shops[0]) is Shop:
-            self.shops = shops
-        elif input_shops_filename is not None:
-            self.shops = InvoiceGenerator.parse_shops(input_shops_filename)
-        else:
-            message = "There is not Shops List or Input Shops File. Please give at least one of them."
-            logger.error(message)
-            raise InvoiceGeneratorInitError(message)
+        self.shops = InvoiceGenerator.parse_shops(input_shops_filename)
+        self._input_shops_filename = input_shops_filename
 
         # Existing files analysis can be here
-        self.invoices_filenames = []
+        self.invoices_filenames: list[str] = []
 
     @staticmethod
     def parse_shops(input_shops_filename: str) -> list[Shop]:
@@ -71,6 +77,9 @@ class InvoiceGenerator:
             logger.error(err)
             raise err
 
+    def generate_empty_file(self) -> None:
+        
+    
     def generate_merged_file(self, do_all: bool = True) -> None:
         """
         Generates final merged file. Can do only merging or also call other functions needed to do all process.
