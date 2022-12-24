@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Загрузки</h1>
+    <h2><a href="{{ url_for('index_page') }}">Перейти на главную</a></h2>
+    <table>
+        <tr>
+            <th>Название файла</th>
+            <th>Дата создания</th>
+        </tr>
+    {% for final_file in files %}
+        <tr>
+            <td><a href="{{ url_for('download_page') }}/{{ final_file.href }}">{{ final_file.caption }}</a></td>
+            <td>{{ final_file.creation_datetime }}</td>
+        </tr> 
+    {% endfor %}
+    </table>
+</body>
+</html>

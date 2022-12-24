@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Главная</h1>
+    <h2><a href="{{ url_for('download_page') }}">Перейти в загрузки</a></h2>
+    <form action="{{ url_for('upload_input') }}" method="POST" enctype="multipart/form-data">
+        <ul>
+            <li>
+                <label for="csv_file">CSV таблица со всеми магазинами (из Google Docs):</label><br>
+                <input type="file" name="{{ CSV_FILE_ID }}"> <br>
+            </li>
+            <li>
+                <label for="md_file">Markdown файл с порядком магазинов:</label><br>
+                <input type="file" name="{{ MD_FILE_ID }}"> <br>
+            </li>
+        </ul>
+
+        <input type="submit" value="Сгенерировать">
+    </form>
+</body>
+</html>
