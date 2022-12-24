@@ -1,0 +1,9 @@
+tmp/
+Result/
+__pycache__/
+.mypy_cache/
+.DS_Store
+*.tsv
+*.md
+!README.md
+*.log
