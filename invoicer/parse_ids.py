@@ -17,8 +17,8 @@ def parse_ids(filename: str) -> list[list[str]]:
             ids.append([])
             current_day_index += 1
         if "-" in line:
+            splited_line = line.split()
             try:
-                splited_line = line.split()
                 id = splited_line[-1]
                 if "-" in id:
                     id = id.replace("-", "")

@@ -2,23 +2,27 @@ from loguru import logger
 from docxtpl import DocxTemplate
 from docxcompose.composer import Composer
 from docx import Document
+from zipfile import ZipFile
+import os
 
-import shops_parser
-import parse_ids
-from classes.shops import *
-from exceptions import *
+from . import shops_parser
+from . import parse_ids
+from .classes.shops import *
+from .exceptions import *
 
 
 logger.add("debug.log")
-TMP_FOLDER = "tmp/"
-RESULT_FOLDER = "Result/"
 
-EMPTY_FILENAME = "Пустой.docx"
+# os.getcwd() needed to get current directory depending on process that imported this module
+TMP_FOLDER = f"{os.getcwd()}/tmp/"
+OUTPUT_FOLDER = f"{os.getcwd()}/output/"
+
+EMPTY_FILENAME = "1. Пустой.docx"
 EMPTY_ID = "0"
 EMPTY_SHOP = Shop(EMPTY_ID, "", "")
 
-
-OUTPUT_FILENAMES = [
+OUTPUT_ZIP_FILENAME = "0. Накладные.zip"
+OUTPUT_NAMES = [
     "2. Вторник",
     "3. Среда",
     "4. Четверг",
@@ -35,7 +39,7 @@ class InvoiceGenerator:
                  input_shops_filename: str,
                  template_filename: str,
                  ids_separator: str = "TestName",
-                 output_names: list[str] = OUTPUT_FILENAMES,
+                 output_names: list[str] = OUTPUT_NAMES,
                  add_empty_file: bool = True,
                  start_tmp_count_from: int = 1):
 
@@ -74,8 +78,8 @@ class InvoiceGenerator:
             logger.error(err)
             raise err
 
-    def generate(self, zip: bool = True) -> None:
-        for day_index, name in enumerate(OUTPUT_FILENAMES):
+    def generate_all(self, zip: bool = True) -> None:
+        for day_index, name in enumerate(OUTPUT_NAMES):
             self.invoices_filenames = []
             self.output_name = name
             ids: list[str] = self.ids_by_days[day_index]
@@ -84,10 +88,17 @@ class InvoiceGenerator:
         if self.add_empty_file:
             self.generate_empty_file()
         
-        ...
+        self.zip_output()
+        
+
+    def zip_output(self):
+        zip_object = ZipFile(OUTPUT_FOLDER + OUTPUT_ZIP_FILENAME, "w")
+        for filename in OUTPUT_NAMES:
+            zip_object.write(f"{OUTPUT_FOLDER}{filename}.docx")
+        zip_object.close()
 
     def generate_empty_file(self) -> None:
-        self.generate_separate_invoice_file(EMPTY_FILENAME, EMPTY_ID, path=RESULT_FOLDER)
+        self.generate_separate_invoice_file(EMPTY_FILENAME, EMPTY_ID, path=OUTPUT_FOLDER)
         ...
     
     def generate_file(self, ids: list[str], do_all: bool = True) -> None:
@@ -150,7 +161,7 @@ class InvoiceGenerator:
         for filename in self.invoices_filenames[1:]:
             doc = Document(f"{TMP_FOLDER}{filename}")
             composer.append(doc)
-        composer.save(f"{RESULT_FOLDER}{target_name}.docx")
+        composer.save(f"{OUTPUT_FOLDER}{target_name}.docx")
         logger.info(f"Merged file generated: {target_name}.docx")
 
     def _rename_alone_docx(self):
@@ -179,5 +190,5 @@ class InvoiceGenerator:
 
 if __name__ == "__main__":
     invoicer = InvoiceGenerator("target.md", "Магазины За ХЛЕБ! - Main info.tsv", "Template.docx")
-    invoicer.generate()
+    invoicer.generate_all()
     pass

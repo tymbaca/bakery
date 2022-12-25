@@ -6,13 +6,18 @@ import logging
 
 from ..invoicer.generate_invoice import InvoiceGenerator
 
+# Paths
+
 INPUT_PATH = "input/"
+TSV_INPUT_PATH = f"{INPUT_PATH}input.tsv"
+MD_INPUT_PATH = f"{INPUT_PATH}input.md"
+
 OUTPUT_PATH = "output/"
 
 TEMPLATE_PATH = "input/template.docx"
 
 # For templates, HTML and response files
-CSV_FILE_ID = "csv_file"
+TSV_FILE_ID = "tsv_file"
 MD_FILE_ID = "md_file"
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -60,9 +65,17 @@ def get_creation_date(path: str) -> str:
     
 
 
-def generate_invoices(csv_path: str, md_path: str, template_path: str = TEMPLATE_PATH):
-    invoicer = InvoiceGenerator(md_path, csv_path, template_path) 
-    invoicer.generate()
+def generate_invoices(tsv_path: str, md_path: str, template_path: str = TEMPLATE_PATH):
+    invoicer = InvoiceGenerator(md_path, tsv_path, template_path) 
+    invoicer.generate_all()
+
+
+def there_is_request_file(file_id):
+    if file_id in request.files:
+        if request.files[file_id].filename:
+            return True
+    # If enything is not True    
+    return False
     
 # -------------------------------------------------------
 
@@ -72,23 +85,25 @@ def index_page():
     if request.method == "POST":
         return redirect(url_for("download_page"))
     else:
-        return render_template("index.html", CSV_FILE_ID=CSV_FILE_ID, MD_FILE_ID=MD_FILE_ID)
+        return render_template("index.html", TSV_FILE_ID=TSV_FILE_ID, MD_FILE_ID=MD_FILE_ID)
     
 @app.route("/upload", methods=["GET", "POST"])
 def upload_input():
     if request.method == "GET":
         return redirect(url_for("download_page"))
     if request.method == "POST":
-        csv_file = request.files[CSV_FILE_ID]
-        md_file = request.files[MD_FILE_ID]
-
-        csv_path = f"{INPUT_PATH}input.csv"
-        md_path = f"{INPUT_PATH}input.md"
-
-        request.files[CSV_FILE_ID].save(csv_path)
-        request.files[MD_FILE_ID].save(md_path)
         
-        generate_invoices(csv_path, md_path)
+        if there_is_request_file(TSV_FILE_ID):
+            request.files[TSV_FILE_ID].save(TSV_INPUT_PATH)
+        if there_is_request_file(MD_FILE_ID):
+            request.files[MD_FILE_ID].save(MD_INPUT_PATH)
+        
+            
+        # Input files are optional. Recent files can be used
+        # if :
+        # if MD_FILE_ID in request.files:
+        # except IndexError
+        generate_invoices(TSV_INPUT_PATH, MD_INPUT_PATH)
         return redirect(url_for("download_page"))
     else:
         raise Exception(f"wtf. method: {request.method}")

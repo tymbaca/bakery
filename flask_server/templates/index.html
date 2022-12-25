@@ -12,8 +12,8 @@
     <form action="{{ url_for('upload_input') }}" method="POST" enctype="multipart/form-data">
         <ul>
             <li>
-                <label for="csv_file">CSV таблица со всеми магазинами (из Google Docs):</label><br>
-                <input type="file" name="{{ CSV_FILE_ID }}"> <br>
+                <label for="tsv_file">CSV таблица со всеми магазинами (из Google Docs):</label><br>
+                <input type="file" name="{{ TSV_FILE_ID }}"> <br>
             </li>
             <li>
                 <label for="md_file">Markdown файл с порядком магазинов:</label><br>

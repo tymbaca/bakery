@@ -1,7 +1,7 @@
 import csv
 import tomllib
 from loguru import logger
-from classes.shops import *
+from .classes.shops import *
 
 
 logger.add("debug.log")
@@ -24,7 +24,9 @@ def _parse_data(tsv_filename: str, table_header, separator) -> list[list[str]]:
     with open(tsv_filename, "r") as file:
         lines = file.read().splitlines()
         data = _split_lines(lines, separator)
-
+        
+        assert len(lines) > 0, "File is empty"
+    
         if table_header:
             _update_column_indexes(data[0])
             return data[1:]
