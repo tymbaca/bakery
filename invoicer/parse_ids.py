@@ -1,5 +1,8 @@
 from pprint import pprint
 
+HEADER_IDENTIFIER = "#"
+SHOP_IDENTIFIER = "="
+
 
 def bake_ids_file(input_filename: str, output_filename: str):
     ids = parse_ids(input_filename)
@@ -13,15 +16,15 @@ def parse_ids(filename: str) -> list[list[str]]:
     ids: list[list[str]] = []
     current_day_index = -1
     for line in lines:
-        if "#" in line:
+        if HEADER_IDENTIFIER in line:
             ids.append([])
             current_day_index += 1
-        if "-" in line:
+        if SHOP_IDENTIFIER in line:
             splited_line = line.split()
             try:
                 id = splited_line[-1]
-                if "-" in id:
-                    id = id.replace("-", "")
+                if SHOP_IDENTIFIER in id:
+                    id = id.replace(SHOP_IDENTIFIER, "")
                
                 ids[current_day_index].append(id)
             except Exception as err:
