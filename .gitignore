@@ -3,7 +3,15 @@ Result/
 __pycache__/
 .mypy_cache/
 .DS_Store
+
 *.tsv
+
 *.md
 !README.md
+
 *.log
+
+*.docx
+!template.docx
+
+*.zip
