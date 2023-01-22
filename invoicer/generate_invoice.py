@@ -4,6 +4,7 @@ from docxcompose.composer import Composer
 from docx import Document
 from zipfile import ZipFile
 import os
+import shutil
 
 from . import shops_parser
 from . import parse_ids
@@ -21,7 +22,8 @@ EMPTY_FILENAME = "1. Пустой.docx"
 EMPTY_ID = "0"
 EMPTY_SHOP = Shop(EMPTY_ID, "", "")
 
-OUTPUT_ZIP_FILENAME = "0. Накладные.zip"
+OUTPUT_ZIP_FILENAME = "0. Накладные"
+OUTPUT_ZIP_FULL_FILENAME = OUTPUT_ZIP_FILENAME + ".zip"
 OUTPUT_NAMES = [
     "2. Вторник",
     "3. Среда",
@@ -92,10 +94,16 @@ class InvoiceGenerator:
         
 
     def zip_output(self):
-        zip_object = ZipFile(OUTPUT_FOLDER + OUTPUT_ZIP_FILENAME, "w")
-        for filename in OUTPUT_NAMES:
-            zip_object.write(f"{OUTPUT_FOLDER}{filename}.docx")
-        zip_object.close()
+        zip_path = OUTPUT_FOLDER + OUTPUT_ZIP_FULL_FILENAME
+        if os.path.isfile(zip_path):
+            os.remove(zip_path)
+            
+        shutil.make_archive(zip_path, "zip", base_dir=OUTPUT_FOLDER)
+        
+        # zip_object = ZipFile(OUTPUT_FOLDER + OUTPUT_ZIP_FILENAME, "w")
+        # for filename in [EMPTY_FILENAME] + OUTPUT_NAMES:
+        #     zip_object.write(f"{OUTPUT_FOLDER}{filename}.docx")
+        # zip_object.close()
 
     def generate_empty_file(self) -> None:
         self.generate_separate_invoice_file(EMPTY_FILENAME, EMPTY_ID, path=OUTPUT_FOLDER)
