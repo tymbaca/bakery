@@ -43,7 +43,9 @@ class InvoiceGenerator:
                  ids_separator: str = "TestName",
                  output_names: list[str] = OUTPUT_NAMES,
                  add_empty_file: bool = True,
-                 start_tmp_count_from: int = 1):
+                 empty_invoices_tail_length: int = 2,
+                 start_tmp_count_from: int = 1,
+                 zip: bool = False):
 
         # self.ids = ids_string.split(ids_separator)
         # self.ids_string = ids_string
@@ -61,6 +63,9 @@ class InvoiceGenerator:
         # Existing files analysis can be here
         self.invoices_filenames: list[str] = []
         self.add_empty_file = add_empty_file
+        
+        self.empty_invoices_tail_length = empty_invoices_tail_length
+        self.zip = zip
 
     @staticmethod
     def parse_shops(input_shops_filename: str) -> list[Shop]:
@@ -89,8 +94,8 @@ class InvoiceGenerator:
             
         if self.add_empty_file:
             self.generate_empty_file()
-        
-        self.zip_output()
+        if self.zip:
+            self.zip_output()
         
 
     def zip_output(self):
@@ -148,6 +153,9 @@ class InvoiceGenerator:
 
             self.generate_separate_invoice_file(invoice_filename, shop_id)
             count += 1
+        
+        # for _ in range(self.empty_invoices_tail_length):
+        #     invoice_filename
 
     def generate_separate_invoice_file(self, invoice_filename: str, shop_id: str, path: str = TMP_FOLDER) -> None:
         doc = DocxTemplate(self.template_filename)
