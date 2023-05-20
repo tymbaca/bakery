@@ -12,6 +12,7 @@ __pycache__/
 *.log
 
 *.docx
-!template.docx
+flask_server/input/*
+flask_server/output/*
 
 *.zip
